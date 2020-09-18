@@ -1,17 +1,18 @@
-version: '2'
-
+version: '3'
+    
 services:
-  license-server:
-    build:
-      context: ./license_portal
-    links:
-      - postgres
-    volumes:
-      - ./license_portal:/app
-
-  postgres:
-    image: 'postgres:9.6'
+  db:
+    image: postgres
     environment:
-     POSTGRES_USER: 'licenses'
-     POSTGRES_PASSWORD: 'licenses'
-     POSTGRES_DB: 'licenses'
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
